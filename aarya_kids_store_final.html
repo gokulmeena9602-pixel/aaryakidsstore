@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aarya Kids Store</title>
+<meta name="description" content="Aarya Kids Store - trendy and comfortable kids wear.">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#fff8fb;color:#29222b}
+header{position:sticky;top:0;z-index:10;background:linear-gradient(135deg,#ff72a7,#8d6cff);color:#fff;padding:15px;text-align:center;box-shadow:0 3px 12px #0002}
+header h1{margin:0;font-size:25px}header small{opacity:.95}
+.hero{text-align:center;padding:42px 18px;background:linear-gradient(135deg,#ffe2ee,#e8e0ff)}
+.hero h2{font-size:31px;margin:0 0 8px}.hero p{margin:8px 0 20px}
+button,.btn{border:0;border-radius:25px;padding:11px 18px;background:#ff4f91;color:#fff;font-weight:700;cursor:pointer}
+.container{max-width:1050px;margin:auto;padding:24px 16px}.title{text-align:center}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:17px}
+.card,.panel{background:#fff;border-radius:18px;box-shadow:0 5px 18px #00000012}
+.card{overflow:hidden;padding-bottom:15px}.card img{width:100%;height:225px;object-fit:cover;background:#eee}
+.card h3{margin:12px 14px 5px}.price{margin:0 14px 12px;font-size:19px;font-weight:bold;color:#df3978}
+.card button{margin-left:14px}.panel{padding:20px;margin-top:24px}
+label{display:block;font-weight:700;margin-top:11px}input,select,textarea{width:100%;padding:11px;margin-top:5px;border:1px solid #ddd;border-radius:10px;font-size:15px}
+textarea{min-height:75px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hidden{display:none}.notice{padding:12px;border-radius:10px;background:#fff1ad;margin-bottom:15px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}.green{background:#159957}.dark{background:#44334e}.danger{background:#e33}
+.order{border:1px solid #eee;padding:13px;border-radius:12px;margin:10px 0}
+footer{text-align:center;background:#29222b;color:#fff;padding:26px;margin-top:30px}
+@media(max-width:600px){.row{grid-template-columns:1fr}.card img{height:205px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🌸 AARYA KIDS STORE 🌸</h1>
+  <small>Premium Kids Wear • Easy Ordering</small>
+</header>
+
+<section class="hero">
+  <h2>Beautiful Dresses for Little Stars 👧👦</h2>
+  <p>Trendy • Comfortable • Premium Quality</p>
+  <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">SHOP NOW</button>
+</section>
+
+<main class="container">
+<section id="products">
+<h2 class="title">🛍️ Our Products</h2>
+<div id="productGrid" class="grid"></div>
+</section>
+
+<section id="orderBox" class="panel hidden">
+<h2>📝 Place Your Order</h2>
+<div id="selected" class="notice"></div>
+<form id="orderForm">
+<div class="row">
+<div><label>Name</label><input id="customerName" required></div>
+<div><label>Mobile Number</label><input id="customerMobile" inputmode="tel" required></div>
+</div>
+<label>Full Address</label><textarea id="customerAddress" required></textarea>
+<div class="row">
+<div><label>City / District</label><input id="customerCity" required></div>
+<div><label>State</label><input id="customerState" required></div>
+</div>
+<div class="row">
+<div><label>PIN Code</label><input id="customerPin" inputmode="numeric" required></div>
+<div><label>Dress Size</label>
+<select id="customerSize">
+<option>0-6 Months</option><option>1-2 Years</option><option>2-3 Years</option>
+<option>3-4 Years</option><option>4-5 Years</option><option>5-6 Years</option>
+<option>6-8 Years</option><option>8-10 Years</option>
+</select></div>
+</div>
+<label>Quantity</label><input id="customerQty" type="number" min="1" value="1" required>
+<label>Comment / Special Request</label><textarea id="customerComment"></textarea>
+<button type="submit" style="margin-top:15px">CONFIRM ORDER ON WHATSAPP</button>
+</form>
+</section>
+
+<section class="panel" id="admin">
+<h2>🔐 Store Admin</h2>
+<div class="notice">Demo admin is stored on this device. You can change WhatsApp and UPI settings here. A production website should use secure server-side login/database.</div>
+<div class="actions">
+<button class="green" onclick="addProduct()">➕ Add Product</button>
+<button class="dark" onclick="editSettings()">⚙️ Store Settings</button>
+<button onclick="showOrders()">📦 Orders</button>
+<button class="danger" onclick="resetStore()">Reset Demo</button>
+</div>
+<div id="settings"></div><div id="orders"></div>
+</section>
+</main>
+
+<footer>© 2026 Aarya Kids Store • All Rights Reserved</footer>
+
+<script>
+const defaultProducts=[
+{id:1,name:"Princess Party Dress",price:550,img:"https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?auto=format&fit=crop&w=700&q=80"},
+{id:2,name:"Cute Girls Frock",price:599,img:"https://images.unsplash.com/photo-1607453998774-d533f65dac99?auto=format&fit=crop&w=700&q=80"},
+{id:3,name:"Kids Traditional Dress",price:550,img:"https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?auto=format&fit=crop&w=700&q=80"}];
+let products=JSON.parse(localStorage.getItem("aaryaProducts")||"null")||defaultProducts;
+let settings=JSON.parse(localStorage.getItem("aaryaSettings")||"null")||{whatsapp:"8890214878",upi:""};
+let selected=null;
+
+function save(){localStorage.setItem("aaryaProducts",JSON.stringify(products));localStorage.setItem("aaryaSettings",JSON.stringify(settings))}
+function render(){
+document.getElementById("productGrid").innerHTML=products.map(p=>`
+<div class="card"><img src="${p.img}" alt="${p.name}">
+<h3>${p.name}</h3><p class="price">₹${p.price}</p>
+<button onclick="order(${p.id})">Order Now</button></div>`).join("");
+}
+function order(id){
+selected=products.find(p=>p.id===id);
+document.getElementById("selected").innerHTML=`<b>${selected.name}</b> — ₹${selected.price}`;
+document.getElementById("orderBox").classList.remove("hidden");
+document.getElementById("orderBox").scrollIntoView({behavior:"smooth"});
+}
+document.getElementById("orderForm").onsubmit=function(e){
+e.preventDefault();
+const qty=Number(document.getElementById("customerQty").value);
+const o={id:Date.now(),product:selected.name,price:selected.price,qty,total:selected.price*qty,
+name:customerName.value,mobile:customerMobile.value,address:customerAddress.value,city:customerCity.value,
+state:customerState.value,pin:customerPin.value,size:customerSize.value,comment:customerComment.value,status:"New Order"};
+let orders=JSON.parse(localStorage.getItem("aaryaOrders")||"[]");orders.push(o);localStorage.setItem("aaryaOrders",JSON.stringify(orders));
+const msg=`AARYA KIDS STORE - NEW ORDER\n\nProduct: ${o.product}\nPrice: ₹${o.price}\nQuantity: ${o.qty}\nTotal: ₹${o.total}\nName: ${o.name}\nMobile: ${o.mobile}\nAddress: ${o.address}, ${o.city}, ${o.state} - ${o.pin}\nSize: ${o.size}\nComment: ${o.comment||"None"}\nUPI: ${settings.upi||"Not set"}`;
+window.open("https://wa.me/91"+settings.whatsapp.replace(/\D/g,"")+"?text="+encodeURIComponent(msg),"_blank");
+alert("Order saved. WhatsApp is opening.");
+this.reset();document.getElementById("orderBox").classList.add("hidden");
+};
+function addProduct(){
+let n=prompt("Dress name?");if(!n)return;
+let p=Number(prompt("Price?","550"));if(!p)return;
+let i=prompt("Image URL?");if(!i)return;
+products.push({id:Date.now(),name:n,price:p,img:i});save();render();
+}
+function editSettings(){
+const w=prompt("WhatsApp number (10 digits):",settings.whatsapp);if(w===null)return;
+const u=prompt("UPI ID (you can change later):",settings.upi);if(u===null)return;
+settings.whatsapp=w.replace(/\D/g,"").slice(-10);settings.upi=u.trim();save();
+alert("Settings saved. WhatsApp: "+settings.whatsapp+(settings.upi?" | UPI: "+settings.upi:" | UPI not set"));
+}
+function showOrders(){
+let o=JSON.parse(localStorage.getItem("aaryaOrders")||"[]");
+document.getElementById("orders").innerHTML="<h3>📦 Orders</h3>"+(o.length?o.reverse().map(x=>`
+<div class="order"><b>${x.product}</b> — ₹${x.total}<br>${x.name} | ${x.mobile}<br>
+${x.address}, ${x.city}, ${x.state} - ${x.pin}<br>Size: ${x.size} | Qty: ${x.qty}<br>Status: <b>${x.status}</b></div>`).join(""):"No orders yet.");
+}
+function resetStore(){if(confirm("Reset products, settings and orders?")){localStorage.clear();location.reload()}}
+render();
+</script>
+</body>
+</html>
